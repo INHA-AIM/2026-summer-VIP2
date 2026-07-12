@@ -1,0 +1,11 @@
+# Python (Camera / YOLO) — 컨테이너 또는 Noetic Python3.8 기준
+# 설치: pip3 install -r requirements-python.txt
+numpy>=1.23,<1.25
+matplotlib>=3.5,<3.8
+python-dateutil>=2.8.2
+pillow>=9.0
+pandas>=1.5,<2.1
+ultralytics>=8.0,<8.4
+torch
+torchvision
+opencv-python>=4.6
