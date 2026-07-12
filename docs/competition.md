@@ -36,15 +36,15 @@
 
 ## 3. 시나리오 파일
 
-| 파일 | 용도 |
-|------|------|
-| `test_scenario_summer.json` | Test Scenario |
-| `map_init_default.json` | Map Init (초기 위치·자세) |
+| 파일 | 용도 | 팀 레포 경로 |
+|------|------|-------------|
+| `test_scenario_summer.json` | Test Scenario | [`data/scenarios/test_scenario_summer.json`](../data/scenarios/test_scenario_summer.json) |
+| `map_init_default.json` | Map Init (초기 위치·자세) | [`data/scenarios/map_init_default.json`](../data/scenarios/map_init_default.json) |
 
-로컬 참고 경로(개인 폴더):  
-`~/projects/2026-summer-Vertically Integrated Project 2/data/`
+HD 맵 참조: [`data/hdmap/R_KR_PG_KATRI/`](../data/hdmap/R_KR_PG_KATRI/)  
+플래너 글로벌 경로: `src/main/config/` (`track_log_recorded_final.csv`, `ref.txt`, zone CSV)
 
-팀 repo에 넣을지·대용량 제외할지는 통합 시 결정. `.gitignore`에 대용량·라이선스 민감 파일을 넣는다.
+원본 PDF는 개인 작업 폴더에 보관. 공지 변경 시 이 문서도 갱신.
 
 ---
 

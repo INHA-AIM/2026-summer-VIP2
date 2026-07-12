@@ -12,6 +12,7 @@ install/
 log/
 logs/
 .catkin_workspace
+src/CMakeLists.txt
 
 # IDE / OS
 .idea/
@@ -28,7 +29,7 @@ Thumbs.db
 *credentials*
 *secret*
 
-# Large / local-only data (시나리오는 배포 방식 확정 전 로컬 유지 가능)
+# Large / local-only sensor recordings
 *.bag
 *.mcap
 *.pcd
@@ -36,3 +37,7 @@ Thumbs.db
 
 # MORAI / 시뮬 로컬 산출
 *.log
+
+# Nested junk (should not reappear)
+*.zip
+Lidar_tmp/
