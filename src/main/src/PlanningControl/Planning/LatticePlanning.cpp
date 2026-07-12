@@ -787,18 +787,18 @@ void getTargetSpeed(double max_curvature, double& out_target_vel, int lookahead_
     // ---------------------------------- FIX 이전 버전
     // 1단계: 곡률 기반 감속 (다단계)
     if (max_curvature > 0.01) {
-        out_target_vel = 30.0 / 3.6;  // 원형 주행로: 30 km/h
-        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-SHARP] 30 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 10.0 / 3.6;  // sharp
+        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-SHARP] 10 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     else if (max_curvature > 0.004) {
-        out_target_vel = 35.0 / 3.6;  // 중간 회피: 50 km/h
-        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-MEDIUM] 50 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 14.0 / 3.6;  // medium
+        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-MEDIUM] 14 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     else if (max_curvature > 0.001) {
-        out_target_vel = 45.0 / 3.6;  // 완만 회피: 60 km/h
-        ROS_INFO_THROTTLE(1.0, "[Speed] [Curve-MILD] 60 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 18.0 / 3.6;  // mild
+        ROS_INFO_THROTTLE(1.0, "[Speed] [Curve-MILD] 18 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     // // ---------------------------------- FIX 이전 느린버전
@@ -860,10 +860,10 @@ void getTargetSpeed(double max_curvature, double& out_target_vel, int lookahead_
 
         // [3] 속도 결정
         if (has_decelerated){
-            out_target_vel = 60.0 / 3.6; // 45km/h로 감속 유지
+            out_target_vel = target_vel * 0.7;
         }
         else {
-            out_target_vel = 70.0 / 3.6; // 원래 목표 속도 유지
+            out_target_vel = target_vel;
         }
         return;
     }

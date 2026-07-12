@@ -6,43 +6,30 @@ services:
     image: vip2-noetic:pc
     container_name: vip2-noetic-pc
 
-    # 호스트와 같은 네트워크 네임스페이스 사용(ROS 통신 편의)
-    network_mode: host
+    # Docker Desktop(Windows) + MORAI(127.0.0.1:9090)용
+    # host 네트워크는 Desktop에서 Windows localhost로 포트가 안 열려 rosbridge 연결이 실패함
+    ports:
+      - "9090:9090"       # MORAI ROS Bridge (WebSocket)
+      - "11311:11311"     # ROS master (디버그용)
+      - "9095:9095/udp"   # MORAI UDP ego ctrl (옵션)
+      - "9096:9096/udp"
+
     gpus: all
 
-    # GPU 전달 (NVIDIA 4050)
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=${DISPLAY:-}
       - QT_X11_NO_MITSHM=1
-
-      # 🔽 하이브리드(AMD+iGPU + NVIDIA dGPU)에서 NVIDIA 강제
-      - __NV_PRIME_RENDER_OFFLOAD=1
-      - __GLX_VENDOR_LIBRARY_NAME=nvidia
-      - __VK_LAYER_NV_optimus=NVIDIA_only
-      # 선택: Wayland 환경이면 같이 주는 게 안전
-      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
+      # 컨테이너 내부 ROS. rosbridge는 0.0.0.0:9090 에서 Windows 127.0.0.1로 publish
+      - ROS_MASTER_URI=http://localhost:11311
 
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${VIP2:-..}:/root/vip2:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /etc/localtime:/etc/localtime:ro
-      - ${HOME}/Downloads/MoraiLauncher_Lin:/mnt/MoraiLauncher_Lin:ro
-      # Wayland 소켓(선택, Ubuntu 기본이 Wayland면 추천)
-      - /run/user/${UID:-1000}:/run/user/${UID:-1000}
 
-    # (옵션) 웹캠/시리얼 쓸 거면 아래 주석 해제
-    # devices:
-    #   - /dev/video0:/dev/video0
-    #   - /dev/ttyUSB0:/dev/ttyUSB0
-
-    # /dev/shm 용량 부족시 GUI 충돌 방지
     shm_size: "2gb"
-
     stdin_open: true
     tty: true
-    command: ["tail","-f","/dev/null"]
-
-    # 필요하면 재시작 정책 사용
-    # restart: unless-stopped
+    command: ["tail", "-f", "/dev/null"]

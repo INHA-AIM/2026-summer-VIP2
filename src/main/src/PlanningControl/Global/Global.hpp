@@ -51,7 +51,7 @@ struct JammingParams
     const double gps_k_p = 0.15;
     const double gps_k_d = 0.02; 
     const double dt = 0.02;
-    const double gps_target_vel = 50.0/3.6;
+    const double gps_target_vel = 15.0/3.6;
 };
 
 

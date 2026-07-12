@@ -16,7 +16,8 @@
 | `src/main/src/PlanningControl/` | Lattice / Jamming / Control → `/ctrl_cmd_0` |
 | `scripts/` | 실행 스크립트 (`ws_env.sh`가 `WS_ROOT` 설정) |
 | `grpc_inha_univ/` | ROS `/ctrl_cmd_0` → MORAI gRPC |
-| `docker/` | ROS Noetic 컨테이너 |
+| `docker/` | ROS Noetic. **9090 publish** (MORAI rosbridge). host 네트워크 미사용 |
+| `requirements-python.txt` | Camera/YOLO pip 의존성 |
 
 ## 데이터 흐름
 
