@@ -11,9 +11,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen en_US.UTF-8 ko_KR.UTF-8 && \
     update-locale LANG=en_US.UTF-8
 
-# 데스크탑 풀 + 개발 유틸 + OpenGL 점검 도구
+# 데스크탑 풀 + MORAI bridge/빌드 의존성
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-desktop-full \
+    ros-noetic-rosbridge-server \
+    ros-noetic-tf2-sensor-msgs \
+    ros-noetic-pcl-ros \
     git curl wget nano vim tmux sudo bash-completion \
     build-essential cmake \
     python3-pip python3-dev \
@@ -22,6 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 편의 bash 설정
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc && \
+    echo '[ -f /root/vip2/devel/setup.bash ] && source /root/vip2/devel/setup.bash' >> /root/.bashrc && \
+    echo "cd /root/vip2 2>/dev/null || true" >> /root/.bashrc && \
     echo "export LANG=en_US.UTF-8" >> /root/.bashrc && \
     echo "export LC_ALL=en_US.UTF-8" >> /root/.bashrc
 
