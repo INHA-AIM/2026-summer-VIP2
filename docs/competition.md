@@ -45,6 +45,7 @@ HD 맵 참조: [`data/hdmap/R_KR_PG_KATRI/`](../data/hdmap/R_KR_PG_KATRI/)
 플래너 글로벌 경로: `src/main/config/` (`track_log_recorded_final.csv`, `ref.txt`, zone CSV)
 
 MORAI Network: Bridge `127.0.0.1:9090`, 센서 Publisher 토픽 `/gps` `/imu` `/Ego_topic` `/lidar3D` `/image_jpeg/compressed`, 제어 `/ctrl_cmd_0`.  
+센서 프리셋(10 Hz): [`data/sensors/24.R2.H2/VIP2.json`](../data/sensors/24.R2.H2/VIP2.json).  
 셋업·트러블슈팅: [setup.md](./setup.md), [troubleshooting.md](./troubleshooting.md)
 
 원본 PDF는 개인 작업 폴더에 보관. 공지 변경 시 이 문서도 갱신.

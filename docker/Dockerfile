@@ -28,12 +28,16 @@ RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc && \
     echo '[ -f /root/vip2/devel/setup.bash ] && source /root/vip2/devel/setup.bash' >> /root/.bashrc && \
     echo "cd /root/vip2 2>/dev/null || true" >> /root/.bashrc && \
     echo "export LANG=en_US.UTF-8" >> /root/.bashrc && \
-    echo "export LC_ALL=en_US.UTF-8" >> /root/.bashrc
+    echo "export LC_ALL=en_US.UTF-8" >> /root/.bashrc && \
+    echo 'export DISPLAY="${DISPLAY:-:0}"' >> /root/.bashrc && \
+    echo "export QT_X11_NO_MITSHM=1" >> /root/.bashrc && \
+    echo "unset LIBGL_ALWAYS_INDIRECT" >> /root/.bashrc
 
 # 워크스페이스(호스트 레포 루트를 /root/vip2 에 마운트)
 WORKDIR /root/vip2
 
-# X11 공유메모리 이슈 회피
+# X11 공유메모리 이슈 회피 + WSLg 기본 디스플레이
 ENV QT_X11_NO_MITSHM=1
+ENV DISPLAY=:0
 
 CMD ["bash"]

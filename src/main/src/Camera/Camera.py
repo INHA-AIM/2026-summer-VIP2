@@ -17,22 +17,28 @@ class LaneDrive:
         rospy.init_node('lane_drive')
         self.bridge = CvBridge()
 
-        # YOLO weights: package source dir (rosrun installs script elsewhere)
+        # YOLO weights: 차선(lane) 모델 = best.pt / 주행가능영역(road) = new_best.pt (bev_test)
         self.model_path = None
         try:
             import rospkg
             pkg_dir = rospkg.RosPack().get_path('Camera')
-            candidate = os.path.join(pkg_dir, 'new_best.pt')
+            candidate = os.path.join(pkg_dir, 'best.pt')
             if os.path.isfile(candidate):
                 self.model_path = candidate
         except Exception:
             pass
         if self.model_path is None:
             self.model_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'new_best.pt'
+                os.path.dirname(os.path.abspath(__file__)), 'best.pt'
+            )
+        if not os.path.isfile(self.model_path):
+            raise FileNotFoundError(
+                f"Lane model not found: {self.model_path} (expected best.pt)"
             )
 
+        print(f"차선 모델 로딩 중... ({self.model_path})")
         self.model = YOLO(self.model_path)
+        print(f"차선 모델 로드 완료! names={getattr(self.model, 'names', None)}")
 
         # Subscriber(모라이 카메라 RGB 토픽), Publisher(판제 필요한 6가지 데이터 담은 배열 형태 토픽)
         # self.topic_name = '/camera/rgb'
@@ -248,13 +254,13 @@ class LaneDrive:
                 cv2.putText(final_display, "No Mask", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             # [시각화: ROS 토픽으로 퍼블리시]
-            try:
-                compressed_msg = self.bridge.cv2_to_compressed_imgmsg(final_display, dst_format='jpeg')
-                self.image_pub.publish(compressed_msg)
-            except Exception as viz_error:
-                rospy.logwarn(f"Visualization publish failed: {viz_error}")
+            # try:
+            #     compressed_msg = self.bridge.cv2_to_compressed_imgmsg(final_display, dst_format='jpeg')
+            #     self.image_pub.publish(compressed_msg)
+            # except Exception as viz_error:
+            #     rospy.logwarn(f"Visualization publish failed: {viz_error}")
 
-            # [시각화: CV2 윈도우 표시]
+            # # [시각화: CV2 윈도우 표시]
             # try:
             #     cv2.imshow("Lane Detection", final_display)
             #     cv2.waitKey(1)

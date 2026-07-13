@@ -749,6 +749,50 @@ void getMaxCurvature(int close_idx, int lookahead_idx, double& max_curvature){
     // ROS_INFO("[Curvature] Max: %.6f | Range: [%d ~ %d] | Lookahead: %d", 
     //          max_curvature, close_idx, end_idx, lookahead_idx);
 }
+
+// ========================================
+// 경로 종료점 감속/정지 (마지막 웨이포인트 기준)
+// ========================================
+bool applyPathEndStop(const VehicleState& ego, double& out_target_vel) {
+    static bool path_end_latched = false;
+
+    if (waypoints.empty()) {
+        return false;
+    }
+
+    const double SLOW_DIST = 25.0;   // m — 이내 감속
+    const double STOP_DIST = 6.0;    // m — 이내 완전 정지
+    const double SLOW_VEL = 15.0 / 3.6;
+
+    if (path_end_latched) {
+        out_target_vel = 0.0;
+        ROS_WARN_THROTTLE(1.0, "[Speed] Path end stop: latched (holding stop).");
+        return true;
+    }
+
+    const Waypoint& goal = waypoints.back();
+    const double dx = goal.x - ego.x;
+    const double dy = goal.y - ego.y;
+    const double dist = std::sqrt(dx * dx + dy * dy);
+
+    if (dist < STOP_DIST) {
+        path_end_latched = true;
+        out_target_vel = 0.0;
+        ROS_WARN_THROTTLE(1.0, "[Speed] Path end stop: dist=%.2fm (goal=%.2f, %.2f). Stopping.",
+                          dist, goal.x, goal.y);
+        return true;
+    }
+
+    if (dist < SLOW_DIST) {
+        out_target_vel = SLOW_VEL;
+        ROS_WARN_THROTTLE(1.0, "[Speed] Path end stop: dist=%.2fm — slowing to %.1f km/h.",
+                          dist, SLOW_VEL * 3.6);
+        return true;
+    }
+
+    return false;
+}
+
 // ========================================
 // 타겟 속도 계산 (곡률 + 장애물 회피율 기반)
 // ========================================
@@ -756,18 +800,8 @@ void getTargetSpeed(double max_curvature, double& out_target_vel, int lookahead_
     double ego_ratio = lattice_ctrl.ego_path_ratio;             // 근거리: 내 차선 유효성
     double valid_ratio = lattice_ctrl.valid_path_ratio;         // 중거리: 선택 경로 주변 유효성
     double very_long_ratio = lattice_ctrl.very_long_path_ratio; // 원거리: 먼 거리 중앙 유효성
-    // ====================================================
-    // 0단계 : 특정 좌표 접근 시 완전 정지
-    double STOP_X = 47.3256711;
-    double STOP_Y = -96.623228;
 
-    double dx = STOP_X - ego.x;
-    double dy = STOP_Y - ego.y;
-    double dist_to_stop = std::sqrt(dx*dx + dy*dy);
-
-    if (dist_to_stop < 5.0) { // 5m 이내 접근 시
-        out_target_vel = 0.0; // 완전 정지
-        ROS_WARN_THROTTLE(1.0, "[Speed] Approaching stop point: %.2f m away. Stopping.", dist_to_stop);
+    if (applyPathEndStop(ego, out_target_vel)) {
         return;
     }
     
@@ -787,18 +821,18 @@ void getTargetSpeed(double max_curvature, double& out_target_vel, int lookahead_
     // ---------------------------------- FIX 이전 버전
     // 1단계: 곡률 기반 감속 (다단계)
     if (max_curvature > 0.01) {
-        out_target_vel = 10.0 / 3.6;  // sharp
-        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-SHARP] 10 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 30.0 / 3.6;  // 원형 주행로: 30 km/h
+        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-SHARP] 30 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     else if (max_curvature > 0.004) {
-        out_target_vel = 14.0 / 3.6;  // medium
-        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-MEDIUM] 14 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 35.0 / 3.6;  // 중간 회피: 50 km/h
+        ROS_WARN_THROTTLE(1.0, "[Speed] [Curve-MEDIUM] 50 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     else if (max_curvature > 0.001) {
-        out_target_vel = 18.0 / 3.6;  // mild
-        ROS_INFO_THROTTLE(1.0, "[Speed] [Curve-MILD] 18 km/h (curvature: %.6f)", max_curvature);
+        out_target_vel = 45.0 / 3.6;  // 완만 회피: 60 km/h
+        ROS_INFO_THROTTLE(1.0, "[Speed] [Curve-MILD] 60 km/h (curvature: %.6f)", max_curvature);
         return;
     }
     // // ---------------------------------- FIX 이전 느린버전
@@ -860,10 +894,10 @@ void getTargetSpeed(double max_curvature, double& out_target_vel, int lookahead_
 
         // [3] 속도 결정
         if (has_decelerated){
-            out_target_vel = target_vel * 0.7;
+            out_target_vel = 60.0 / 3.6; // 45km/h로 감속 유지
         }
         else {
-            out_target_vel = target_vel;
+            out_target_vel = 70.0 / 3.6; // 원래 목표 속도 유지
         }
         return;
     }

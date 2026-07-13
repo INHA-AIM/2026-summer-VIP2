@@ -1,33 +1,36 @@
 #!/bin/bash
 
-# RViz 시각화 실행 스크립트
-# visualization_rviz.rviz 설정파일을 사용하여 RViz 실행
+# RViz 시각화 — external visualization_2_rviz.rviz 사용
+# Docker Desktop + WSLg: LIBGL_ALWAYS_INDIRECT=1 이면 GLXContext 실패하는 경우가 많음
 
-echo "Starting RViz with visualization_rviz.rviz..."
+echo "Starting RViz with visualization_2_rviz.rviz..."
 
-# X11 포워딩 설정 확인
 if [ -z "$DISPLAY" ]; then
-    echo "Warning: DISPLAY is not set. Setting to :1"
-    export DISPLAY=:1
+    # WSLg 기본 디스플레이
+    export DISPLAY=:0
+    echo "Warning: DISPLAY was unset; using DISPLAY=:0 (WSLg)"
 fi
 
-# OpenGL 관련 환경 변수 설정
 export QT_X11_NO_MITSHM=1
-export LIBGL_ALWAYS_INDIRECT=1
-export LIBGL_DEBUG=verbose
 
-# 현재 스크립트 디렉토리 확인
+# 간접 GL은 Docker Desktop에서 RViz GLX를 깨뜨리는 경우가 많아 기본 OFF.
+# VcXsrv 등으로 간접 렌더가 필요할 때만: LIBGL_ALWAYS_INDIRECT=1 ./scripts/rviz_visualization.sh
+if [ "${LIBGL_ALWAYS_INDIRECT:-}" = "1" ]; then
+    echo "LIBGL_ALWAYS_INDIRECT=1 (user override)"
+else
+    unset LIBGL_ALWAYS_INDIRECT
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RVIZ_CONFIG="$SCRIPT_DIR/visualization_2_rviz.rviz"
 
-# RViz 설정 파일 존재 확인
 if [ ! -f "$RVIZ_CONFIG" ]; then
     echo "Error: RViz config file not found: $RVIZ_CONFIG"
     exit 1
 fi
 
 echo "DISPLAY=$DISPLAY"
+echo "LIBGL_ALWAYS_INDIRECT=${LIBGL_ALWAYS_INDIRECT:-<unset>}"
 echo "Running RViz..."
 
-# RViz 실행
 rviz -d "$RVIZ_CONFIG"

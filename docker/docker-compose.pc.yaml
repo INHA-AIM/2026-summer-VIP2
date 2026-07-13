@@ -19,7 +19,8 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
-      - DISPLAY=${DISPLAY:-}
+      # WSLg 기본 :0 (호스트 DISPLAY가 있으면 그대로 사용)
+      - DISPLAY=${DISPLAY:-:0}
       - QT_X11_NO_MITSHM=1
       # 컨테이너 내부 ROS. rosbridge는 0.0.0.0:9090 에서 Windows 127.0.0.1로 publish
       - ROS_MASTER_URI=http://localhost:11311

@@ -585,6 +585,10 @@ double estimatePathCurvature(int close_idx) {
 // 목표 속도 계산 (곡률 제한 + 장애물 기반 감속)
 // ============================================================================
 void getTargetSpeedVA(double max_curvature, double& out_target_vel, const VehicleState& ego) {
+    if (applyPathEndStop(ego, out_target_vel)) {
+        return;
+    }
+
     double ego_ratio = lattice_ctrl.ego_path_ratio;             // 근거리: 내 차선 유효성
     double valid_ratio = lattice_ctrl.valid_path_ratio;         // 중거리: 선택 경로 주변 유효성
     double very_long_ratio = lattice_ctrl.very_long_path_ratio; // 원거리: 먼 거리 중앙 유효성

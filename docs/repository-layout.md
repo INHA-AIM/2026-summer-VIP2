@@ -40,5 +40,6 @@ MORAI (scenarios + sensors)
 
 ## 제외한 레거시
 
-`learning_by_cheating`, 실험 CSV 덤프, `*.zip`, 중복 YOLO 가중치(`best.pt` 등)는 이식하지 않았다.  
+`learning_by_cheating`, 실험 CSV 덤프, `*.zip`은 이식하지 않았다.  
+카메라 가중치: **`best.pt`(차선)** + **`new_best.pt`(주행가능영역)** 둘 다 사용한다.  
 참고 clone: 상위 폴더 `external/aim_ws-va_seoyeon/`.
