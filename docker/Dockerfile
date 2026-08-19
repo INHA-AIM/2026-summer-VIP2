@@ -23,6 +23,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping net-tools mesa-utils \
     && rm -rf /var/lib/apt/lists/*
 
+# YOLO 인지 스택 (Python 3.8 기준). 2026-08 vip2-noetic-pc 컨테이너에서
+# 실제로 쓰던 버전을 그대로 고정했다 — torch 2.4.1 이 py3.8 마지막 지원 버전.
+# torch 는 기본 PyPI 인덱스라 nvidia-*-cu12 (CUDA 12.1) 런타임을 함께 끌어온다(~5GB).
+RUN pip3 install --no-cache-dir --upgrade "pip<25" && \
+    pip3 install --no-cache-dir \
+      "torch==2.4.1" \
+      "torchvision==0.19.1" \
+      "ultralytics==8.4.92" \
+      "opencv-python==5.0.0.93" \
+      "numpy==1.24.4" \
+      "pandas==2.0.3" \
+      "polars==1.8.2" \
+      "matplotlib==3.7.5"
+
 # 편의 bash 설정
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc && \
     echo '[ -f /root/vip2/devel/setup.bash ] && source /root/vip2/devel/setup.bash' >> /root/.bashrc && \
