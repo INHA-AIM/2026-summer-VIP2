@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-desktop-full \
     ros-noetic-rosbridge-server \
+    python3-bson-ext \
     ros-noetic-tf2-sensor-msgs \
     ros-noetic-pcl-ros \
     git curl wget nano vim tmux sudo bash-completion \
