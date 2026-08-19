@@ -5,7 +5,7 @@
 
 | | |
 |---|---|
-| **GitHub** | https://github.com/ahnsh03/26-summer-VIP2 |
+| **GitHub** | https://github.com/INHA-AIM/2026-summer-VIP2 |
 | **시뮬** | MORAI 24.R2.H2 · `2023_Hyundai_ioniq5` |
 | **스택** | ROS Noetic · Lattice (`aim_ws` `va_seoyeon` 정리 이식) |
 
@@ -29,7 +29,7 @@
 호스트 Ubuntu 26.04 등에는 ROS Noetic apt가 **없다**. Docker를 쓴다.
 
 ```bash
-git clone https://github.com/ahnsh03/26-summer-VIP2.git
+git clone https://github.com/INHA-AIM/2026-summer-VIP2.git
 cd 26-summer-VIP2
 export VIP2="$(pwd)"
 cd docker && docker compose -f docker-compose.pc.yaml up -d --build

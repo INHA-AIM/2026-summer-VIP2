@@ -20,7 +20,7 @@
 ## 1. clone
 
 ```bash
-git clone https://github.com/ahnsh03/26-summer-VIP2.git
+git clone https://github.com/INHA-AIM/2026-summer-VIP2.git
 cd 26-summer-VIP2
 git checkout main && git pull
 git checkout -b feature/<이름>-<기능>
