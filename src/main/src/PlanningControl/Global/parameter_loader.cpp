@@ -27,9 +27,10 @@ void initializeControlParameters() {
     Kd = 0.0;
     k_gain = 0.7;
     curve_standard = 0.0025;
-    // 하계 리허설: 기본 속도 하향 (기존 40/60 km/h는 과도)
-    curve_vel = 12.0 / 3.6;   // km/h
-    target_vel = 20.0 / 3.6;  // km/h
+    // curve_vel = 40.0 / 3.6;  // 30
+    // target_vel = 60.0 / 3.6; // 65
+    curve_vel = 40.0 / 3.6;  // 30
+    target_vel = 60.0 / 3.6; // 65
     lattice_ctrl.ld_short = 8.0;      // 5m -> 8m
     lattice_ctrl.ld_medium = 10.0;    // 10m
     lattice_ctrl.ld_long = 20.0;      // 15m

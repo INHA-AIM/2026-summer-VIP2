@@ -27,6 +27,8 @@ void selectBestPath(LatticeControl& lattice_ctrl);
 void getTargetLocalPathIdx(LatticeControl& lattice_ctrl, double ld, int& out_idx);
 void getMaxCurvature(int close_idx, int lookahead_idx, double& out_curvature);
 void getTargetSpeed(double max_curvature, double& out_speed, int lookahead_idx, int mode, const VehicleState& ego);
+// 경로 마지막 웨이포인트 접근 시 감속/정지. true면 out_target_vel 확정(호출측 return)
+bool applyPathEndStop(const VehicleState& ego, double& out_target_vel);
 
 
 // ========================================

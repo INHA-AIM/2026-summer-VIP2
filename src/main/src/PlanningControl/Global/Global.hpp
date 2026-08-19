@@ -44,14 +44,14 @@ struct Jamming_offset{
 
 struct JammingParams
 {
-    const double Ld = 50.0;
+    const double Ld = 30.0;              // 동계와 동일
     const float wheel_base = 3.0;
     double gps_steering = 0.0;
-    const double gps_alpha = 0.1; 
+    const double gps_alpha = 0.1;
     const double gps_k_p = 0.15;
-    const double gps_k_d = 0.02; 
+    const double gps_k_d = 0.02;
     const double dt = 0.02;
-    const double gps_target_vel = 15.0/3.6;
+    const double gps_target_vel = 40.0 / 3.6;  // km/h
 };
 
 

@@ -38,6 +38,20 @@ MORAI가 토픽마다 WebSocket을 연다. **정상**. 스택 중복이 아님.
 로그에 `new node registered with same name` → 기존 브리지 종료·전 클라이언트 끊김.  
 → bridge 하나만, MORAI 재Connect.
 
+### 센서 50 Hz → 코스 이탈 / `TF_REPEATED_DATA` 폭주
+원인: Camera·LiDAR를 **50 Hz**로내면 rosbridge(WebSocket JSON)와 YOLO/costmap이 따라가지 못한다.  
+메시지가 쌓이거나 지연·중복 타임스탬프가 나고, planner(약 10 Hz)가 보는 GPS/자세/costmap이 어긋나 **시나리오 시작 직후 경로 이탈**처럼 보인다.
+
+대응 (팀 표준):
+
+| 센서 | 권장 |
+|------|------|
+| Camera / LiDAR / IMU | **10 Hz** (`sensorPeriod` 0.1) |
+| GPS | **5 Hz** (`sensorPeriod` 0.2) |
+
+프리셋: [`data/sensors/24.R2.H2/VIP2.json`](../data/sensors/24.R2.H2/VIP2.json)  
+확인: `rostopic hz /lidar3D /image_jpeg/compressed /imu /gps`
+
 ## 주행 / 제어
 
 ### 목표 속도를 넘겨 계속 가속 (accel≈1.0)
@@ -58,6 +72,12 @@ GPS·IMU Publisher, `ref.txt`/`track_log_recorded_final.csv`와 하계 map_init 
 
 ## RViz
 
+```bash
+# 컨테이너, planner 기동 후 (DISPLAY는 ws_env.sh 기본값)
+source scripts/ws_env.sh
+./scripts/rviz_visualization.sh
+```
+
+- 호스트: `xhost +local:` (WSLg)  
 - `DISPLAY=host.docker.internal:0` → Windows X(VcXsrv) 필요할 때  
-- WSLg: `DISPLAY=:0` + `unset LIBGL_ALWAYS_INDIRECT`  
-- 실패 시 Foxglove → `ws://localhost:9090`
+- GLX 실패 시 Foxglove → `ws://localhost:9090`

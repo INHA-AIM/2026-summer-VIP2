@@ -41,6 +41,7 @@ cd /root/vip2 && ./init_setting.sh && ./build.sh
 ```
 
 시나리오: [`data/scenarios/`](data/scenarios/).  
+센서 프리셋(10 Hz): [`data/sensors/24.R2.H2/VIP2.json`](data/sensors/24.R2.H2/VIP2.json).  
 상세·토픽표·RViz: [docs/setup.md](docs/setup.md).
 
 ---
@@ -50,6 +51,7 @@ cd /root/vip2 && ./init_setting.sh && ./build.sh
 ```
 26-summer-VIP2/          # = catkin workspace root
 ├── data/scenarios/      # Test Scenario · Map Init
+├── data/sensors/        # MORAI Sensor 프리셋 (VIP2.json, 10 Hz)
 ├── data/hdmap/          # R_KR_PG_KATRI
 ├── docs/
 ├── docker/              # Noetic + 9090 publish (MORAI rosbridge)
@@ -71,4 +73,4 @@ cd /root/vip2 && ./init_setting.sh && ./build.sh
 
 허용: **`ctrl_cmd`**, **`MoraiEventCmdSrv`** 만.  
 출력 토픽: `/ctrl_cmd_0`.  
-리허설 기본 목표 속도: **20 km/h** (`parameter_loader.cpp`).
+기본 목표 속도: **60 km/h** / 곡선 40 (`parameter_loader.cpp`, external과 동일).

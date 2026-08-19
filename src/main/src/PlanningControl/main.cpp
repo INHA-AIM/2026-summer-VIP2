@@ -18,7 +18,6 @@
 #include <iomanip>
 #include <chrono>
 #include <ctime>
-#include <cmath>
 #include <morai_msgs/CtrlCmd.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Int32.h>
@@ -87,35 +86,7 @@ void gpsCallback(const morai_msgs::GPSMessage::ConstPtr& msg) {
 }
 
 void egoCallback(const morai_msgs::EgoVehicleStatus::ConstPtr& msg) {
-    // 속도 피드백: velocity 벡터 크기 사용.
-    // rosbridge 경유 시 velocity.x 만 0으로 오고 실속도는 position 차분으로만
-    // 잡히는 경우가 있어, 저속이면 위치 차분으로 보정한다 (과속/풀액셀 방지).
-    const double vx = msg->velocity.x;
-    const double vy = msg->velocity.y;
-    const double vz = msg->velocity.z;
-    double speed = std::sqrt(vx * vx + vy * vy + vz * vz);
-
-    static double prev_x = msg->position.x;
-    static double prev_y = msg->position.y;
-    static ros::Time prev_t(0);
-    ros::Time t = msg->header.stamp;
-    if (t.toSec() <= 0.0) {
-        t = ros::Time::now();
-    }
-
-    if (speed < 0.05 && prev_t.toSec() > 0.0) {
-        const double dt = (t - prev_t).toSec();
-        if (dt > 1e-3 && dt < 0.5) {
-            const double dx = msg->position.x - prev_x;
-            const double dy = msg->position.y - prev_y;
-            speed = std::sqrt(dx * dx + dy * dy) / dt;
-        }
-    }
-
-    prev_x = msg->position.x;
-    prev_y = msg->position.y;
-    prev_t = t;
-    ego.vel = speed;
+    ego.vel = msg->velocity.x;
 }
 
 void imuCallback(const sensor_msgs::Imu::ConstPtr& msg) {

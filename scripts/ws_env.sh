@@ -14,6 +14,15 @@ fi
 
 cd "$WS_ROOT" || return 1 2>/dev/null || exit 1
 
+# GUI (cv2.imshow / RViz / rqt) — Docker Desktop + WSLg 기본값
+# 이미 설정된 DISPLAY(예: host.docker.internal:0)는 유지
+if [ -z "${DISPLAY:-}" ]; then
+  export DISPLAY=:0
+fi
+export QT_X11_NO_MITSHM=1
+# Docker Desktop에서 간접 GL은 OpenCV/RViz GLX를 자주 깨뜨림
+unset LIBGL_ALWAYS_INDIRECT
+
 if [ -f "$WS_ROOT/devel/setup.bash" ]; then
   # shellcheck disable=SC1091
   source "$WS_ROOT/devel/setup.bash"
